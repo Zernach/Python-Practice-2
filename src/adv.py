@@ -1,6 +1,8 @@
 from room import Room
+from player import Player
 
 # Declare all the rooms
+# A dictionary of nicknames for rooms (keys) and the room objects themselves (values)
 
 room = {
     'outside':  Room("Outside Cave Entrance",
