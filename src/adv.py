@@ -46,7 +46,7 @@ def movement(choice):
                 print('You unlock the door with your Golden Key...')
                 narrow.n_to = treasure
         except:
-            print('What is the keyhole for?')
+            print('What is that keyhole for?')
             narrow.n_to = narrow
 
     # N, S, E, W movement handling
