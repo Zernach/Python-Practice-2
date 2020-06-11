@@ -48,7 +48,7 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
-player = Player('Ryan', room['outside'])
+player1 = Player('Ryan', room['outside'])
 
 # Write a loop that:
 #
@@ -62,19 +62,31 @@ player = Player('Ryan', room['outside'])
 # If the user enters "q", quit the game.
 
 while True:
-    print(f"Your current location is: {player.location.name}")
-    print(f"Description of location: {player.location.description}")
+    print(f"Your current location is: {player1.room.name}")
+    print(f"Description of location: {player1.room.description}")
     choice = input("Select a direction to move (n, s, e, w) or q to quit: ")
 
     if choice == 'q':
         break
     elif choice == 'n':
-        pass
+        try:
+            player1.room = (player1.room).n_to
+        except:
+            print('Invalid choice. There is no room to the NORTH.')
     elif choice == 's':
-        pass
+        try:
+            player1.room = (player1.room).s_to
+        except:
+            print('Invalid choice. There is no room to the SOUTH.')
     elif choice == 'e':
-        pass
+        try:
+            player1.room = (player1.room).e_to
+        except:
+            print('Invalid choice. There is no room to the EAST.')
     elif choice == 'w':
-        pass
+        try:
+            player1.room = (player1.room).w_to
+        except:
+            print('Invalid choice. There is no room to the WEST.')
     else:
         pass
