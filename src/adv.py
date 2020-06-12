@@ -3,25 +3,28 @@ from player import Player
 
 # Declare all the rooms
 outside = Room("Outside Cave Entrance",
-                "North of you, the cave mount beckons")
+                """"North of you, the cave mount beckons.
+                    Or, head south to go home — adventure time is over.
+                    """)
 
 foyer = Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east.
-""")
+                         passages run north and east.
+                         """)
 
 overlook =  Room("Grand Overlook", """A steep cliff appears before you, falling
-into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm.
-There is a golden key on the ground.""", [Item('Golden Key')])
+                                      into the darkness. Ahead to the north, a light flickers in
+                                      the distance, but there is no way across the chasm.
+                                      There is a golden key on the ground.
+                                      """, [Item('a golden key')])
 
 narrow = Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air.
-""")
+                                    to north. The smell of gold permeates the air.
+                                    """)
 
 treasure = Room("Treasure Chamber", """You've found the long-lost treasure
-chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south.
-""")
+                                       chamber! Sadly, it has already been completely emptied by
+                                       earlier adventurers. The only exit is to the south.
+                                       """)
 
 home = Room('Home', """Enough adventure time -- go home! Game over for now.""")
 
@@ -84,34 +87,48 @@ def movement(choice):
 ###  ^
 ## Home
 
+def status_check():
+    print(f"\nYour current location is: {player1.room.name}")
+    print(f"Description of location: {player1.room.description}")
+    if player1.items == []:
+        pass
+    else:
+        print(player1.items[i].name for i in range(0, len(player1.items)))
+
+
+
+
+def item_handling(choice):
+    try:
+        player1.items.append(player1.room.items[0])
+        print(f'You have added {player1.room.items[0].name} to your inventory.')
+        player1.room.items = []
+        try:
+            player1.room.description = player1.room.description.replace("a golden key", "nothing")
+        except:
+            pass
+    except:
+        print('Invalid choice. There is nothing here to pickup.')
+
 
 # Infinite Loop until Player presses q for quit:
 # Prints the current room name
 # Prints the current description (the textwrap module might be useful here).
 # Waits for user input and decides what to do.
 while True:
-    print(f"Your current location is: {player1.room.name}")
-    print(f"Description of location: {player1.room.description}")
+
+    status_check()
     choice = input("Select a direction to move (n, s, e, w), p to pickup items, or q to quit: ")
     
     if choice == 'q':
         break
 
     elif choice == 'p': # p for pickup items
-        try:
-            player1.items.append(player1.room.items[0])
-            print(f'You have added {player1.room.items[0].name} to your inventory.')
-            player1.room.items = []
-            try:
-                player1.room.description = player1.room.description.replace("There is a golden key on the ground.", "")
-            except:
-                pass
-        except:
-            print('Invalid choice. There is nothing here to pickup.')
+        item_handling(choice)
 
-    elif choice == 'n' or 's' or 'e' or 'w':
+    elif choice in ['n', 'e', 's', 'w']:
         movement(choice)
 
     else:
-        print('IDK what that choice means...')
+        print("\nI'm not sure what that choice means...")
 
