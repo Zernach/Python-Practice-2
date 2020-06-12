@@ -6,10 +6,3 @@ class Room:
         self.name = name
         self.description = description
         self.items = list(items)
-
-class Item:
-    def __init__(self, name):
-        self.name = name
-
-    def __str__(self):
-        return self.name

@@ -1,10 +1,11 @@
-from room import Room, Item
+from room import Room
 from player import Player
+from item import Item
 
-# Declare all the rooms
+# Instantiate All Rooms
 outside = Room("Outside Cave Entrance",
                 """"North of you, the cave mount beckons.
-                    Or, head south to go home — adventure time is over.
+                    Or, head south to go back home to the real world.
                     """)
 
 foyer = Room("Foyer", """Dim light filters in from the south. Dusty
@@ -14,22 +15,29 @@ foyer = Room("Foyer", """Dim light filters in from the south. Dusty
 overlook =  Room("Grand Overlook", """A steep cliff appears before you, falling
                                       into the darkness. Ahead to the north, a light flickers in
                                       the distance, but there is no way across the chasm.
-                                      There is a golden key on the ground.
-                                      """, [Item('a golden key')])
+                                      """)
 
 narrow = Room("Narrow Passage", """The narrow passage bends here from west
                                     to north. The smell of gold permeates the air.
                                     """)
 
-treasure = Room("Treasure Chamber", """You've found the long-lost treasure
-                                       chamber! Sadly, it has already been completely emptied by
-                                       earlier adventurers. The only exit is to the south.
+treasure = Room("Treasure Chamber", """You've found the long-lost treasure chamber!
                                        """)
 
-home = Room('Home', """Enough adventure time -- go home! Game over for now.""")
+home = Room('Home', """Enough adventure time -- go back home to the real world! Game over for now.""")
 
-# Make a new player object that is currently in the 'outside' room.
-player1 = Player('Ryan', outside)
+# Instantiate All Items, and Add Items to Rooms
+key = Item('key')
+overlook.items.append(key)
+gold = Item('treasure')
+treasure.items.append(gold)
+lantern = Item('lantern')
+
+# Add all Items that exist to a List
+item_list = [key, treasure, lantern]
+
+# Instantiate Player, who is Starting in the Outside Room
+player1 = Player('Ryan', outside, items = [lantern])
 
 # Movement Handling
 def movement(choice):
@@ -44,11 +52,10 @@ def movement(choice):
     treasure.s_to = narrow
     # If the player is in the narrow passage, check if key is in player's inventory
     if player1.room.name == 'Narrow Passage':
-        try:
-            if player1.items[0].name == 'Golden Key':
-                print('You unlock the door with your Golden Key...')
-                narrow.n_to = treasure
-        except:
+        if key in player1.items:
+            print('You unlock the door with your golden key...')
+            narrow.n_to = treasure
+        else:
             print('What is that keyhole for?')
             narrow.n_to = narrow
 
@@ -88,27 +95,59 @@ def movement(choice):
 ## Home
 
 def status_check():
+
     print(f"\nYour current location is: {player1.room.name}")
     print(f"Description of location: {player1.room.description}")
-    if player1.items == []:
-        pass
+
+    # Items in Player's Inventory
+    if len(player1.items) == 0:
+        print("\nItems in Inventory: \nn/a")
     else:
-        print(player1.items[i].name for i in range(0, len(player1.items)))
+        print("Items in your inventory: ")
+        for item_in_inventory in player1.items:
+            print(item_in_inventory.name)
+    
+    # Items in Room
+    if len(player1.room.items) == 0:
+        print("\nItems in Room: \nn/a")
+    else:
+        print("\nItems in Room: ")
+        for item_in_room in player1.room.items:
+            print(item_in_room.name)
 
-
-
-
-def item_handling(choice):
+def pickup_item():
     try:
-        player1.items.append(player1.room.items[0])
-        print(f'You have added {player1.room.items[0].name} to your inventory.')
-        player1.room.items = []
-        try:
-            player1.room.description = player1.room.description.replace("a golden key", "nothing")
-        except:
-            pass
+        item = input('Which item would you like to pickup: ')
+        for item_in_list in player1.room.items:
+            if item_in_list.name == item:
+                item = item_in_list
+                try:
+                    player1.items.append(item)
+                    print(f'You have added {item} to your inventory.')
+                    player1.room.items.remove(item)
+                except:
+                    print('Invalid choice. There is nothing here to pickup.')
+            else:
+                pass
     except:
         print('Invalid choice. There is nothing here to pickup.')
+
+def drop_item():
+    try:
+        item = input('Which item would you like to drop: ')
+        for item_in_list in player1.items:
+            if item_in_list.name == item:
+                item = item_in_list
+                try:
+                    player1.room.items.append(item)
+                    print(f'You have removed {item} from your inventory.')
+                    player1.items.remove(item)
+                except:
+                    print('Invalid choice. That item is not in your inventory.')
+            else:
+                pass
+    except:
+        print('Invalid choice. That item is not in your inventory.')
 
 
 # Infinite Loop until Player presses q for quit:
@@ -116,19 +155,31 @@ def item_handling(choice):
 # Prints the current description (the textwrap module might be useful here).
 # Waits for user input and decides what to do.
 while True:
-
+    print("———————————————————————————————————————————————")
     status_check()
-    choice = input("Select a direction to move (n, s, e, w), p to pickup items, or q to quit: ")
+    choice = input("""
+    n = north
+    s = south
+    e = east
+    w = west
+    p = to pickup an item
+    d = to drop an item
+    q = quit
+
+    Make your choice: """)
     
-    if choice == 'q':
+    if choice == 'q': # q for quit
         break
 
-    elif choice == 'p': # p for pickup items
-        item_handling(choice)
+    elif choice == 'p': # p for pickup item
+        pickup_item()
 
-    elif choice in ['n', 'e', 's', 'w']:
+    elif choice == 'd': # d for drop item
+        drop_item()
+
+    elif choice in ['n', 'e', 's', 'w']: # n, s, e, w for directional movement
         movement(choice)
 
     else:
-        print("\nI'm not sure what that choice means...")
+        print("\n**********\nI'm not sure what that choice means...\n**********")
 
