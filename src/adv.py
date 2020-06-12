@@ -4,37 +4,42 @@ from item import Item
 
 # Instantiate All Rooms
 outside = Room("Outside Cave Entrance",
-                """"North of you, the cave mount beckons.
-                    Or, head south to go back home to the real world.
+                """"North of you, the cave mount beckons. 
+                Or, head south to go back home 
+                to the real world.
                     """)
 
-foyer = Room("Foyer", """Dim light filters in from the south. Dusty
-                         passages run north and east.
+foyer = Room("Foyer", """Dim light filters in from the south. 
+                        Dusty passages run north and east.
+                        It's spooky in here.
                          """)
 
-overlook =  Room("Grand Overlook", """A steep cliff appears before you, falling
-                                      into the darkness. Ahead to the north, a light flickers in
-                                      the distance, but there is no way across the chasm.
+overlook =  Room("Grand Overlook", """A steep cliff appears before you, falling into the darkness. 
+                                    Ahead to the north, a light flickers in the distance, 
+                                    but there is no way across the chasm.
                                       """)
 
 narrow = Room("Narrow Passage", """The narrow passage bends here from west
-                                    to north. The smell of gold permeates the air.
+                                    to north. The smell of gold 
+                                    permeates the air.
                                     """)
 
-treasure = Room("Treasure Chamber", """You've found the long-lost treasure chamber!
+treasure_room = Room("Treasure Chamber", """Alas! 
+                                    You've found the long-lost 
+                                    treasure chamber!
                                        """)
 
-home = Room('Home', """Enough adventure time -- go back home to the real world! Game over for now.""")
+home = Room('Home', """Enough adventure time -- 
+                go back home to the real world! 
+                Game over for now.
+                """)
 
 # Instantiate All Items, and Add Items to Rooms
 key = Item('key')
 overlook.items.append(key)
-gold = Item('treasure')
-treasure.items.append(gold)
+gold = Item('gold')
+treasure_room.items.append(gold)
 lantern = Item('lantern')
-
-# Add all Items that exist to a List
-item_list = [key, treasure, lantern]
 
 # Instantiate Player, who is Starting in the Outside Room
 player1 = Player('Ryan', outside, items = [lantern])
@@ -43,18 +48,19 @@ player1 = Player('Ryan', outside, items = [lantern])
 def movement(choice):
     # Room linkage declarations, which change based on items in inventory
     outside.n_to = foyer
-    outside.s_to = home
     foyer.s_to = outside
     foyer.n_to = overlook
     foyer.e_to = narrow
     overlook.s_to = foyer
     narrow.w_to = foyer
-    treasure.s_to = narrow
+    treasure_room.s_to = narrow
+    outside.s_to = home
+    home.n_to = outside
     # If the player is in the narrow passage, check if key is in player's inventory
     if player1.room.name == 'Narrow Passage':
         if key in player1.items:
             print('You unlock the door with your golden key...')
-            narrow.n_to = treasure
+            narrow.n_to = treasure_room
         else:
             print('What is that keyhole for?')
             narrow.n_to = narrow
@@ -156,7 +162,18 @@ def drop_item():
 # Waits for user input and decides what to do.
 while True:
     print("———————————————————————————————————————————————")
+
+    if player1.room.name == 'Home':
+        if gold in player1.items:
+            print('CONGRATULATIONS! YOU HAVE BROUGHT HOME THE GOLD! THE END\n')
+            break
+        else:
+            pass
+    else:
+        pass
+
     status_check()
+
     choice = input("""
     n = north
     s = south
